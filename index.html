@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🏔️ Saalbach-Hinterglemm – Familienreise Aug 2026</title>
+  <meta name="description" content="Personalisierter Reiseführer für Saalbach-Hinterglemm, 20.–30. August 2026 – Wanderrouten, Aktivitäten, Restaurants für Familien mit Kindern"/>
+  <meta property="og:title" content="Saalbach-Hinterglemm – Familienreise 2026"/>
+  <meta property="og:description" content="Wanderrouten, Hochseilpark, Klammen, Restaurants – 10 Tage Abenteuer für die ganze Familie"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f4f7f0;
+      --bg-gradient-start: #e8f5e9;
+      --bg-gradient-end: #ffffff;
+      --text-primary: #1a2e1a;
+      --text-secondary: #4a5568;
+      --card-bg: #ffffff;
+      --shadow: rgba(0,0,0,0.08);
+      --shadow-hover: rgba(0,0,0,0.16);
+      --nav-bg: #ffffff;
+      --border-color: #e2e8dc;
+      --accordion-bg: #f4f7f0;
+      --green-primary: #2e7d32;
+      --green-light: #66bb6a;
+      --blue-primary: #1565c0;
+      --orange-accent: #e65100;
+      --badge-bg: #e8f5e9;
+    }
+    [data-theme="dark"] {
+      --bg-primary: #1a1f1a;
+      --bg-secondary: #252b25;
+      --bg-gradient-start: #1a2e1a;
+      --bg-gradient-end: #1a1f1a;
+      --text-primary: #e8f0e8;
+      --text-secondary: #a0b0a0;
+      --card-bg: #252b25;
+      --shadow: rgba(0,0,0,0.4);
+      --shadow-hover: rgba(0,0,0,0.6);
+      --nav-bg: #1a1f1a;
+      --border-color: #354035;
+      --accordion-bg: #1f261f;
+      --badge-bg: #1f2e1f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(to bottom, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    a { color: var(--green-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg);
+      border-bottom: 2px solid var(--green-primary);
+      box-shadow: 0 2px 8px var(--shadow);
+      transition: background 0.3s;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 1rem;
+      flex-wrap: wrap; gap: 0.4rem;
+    }
+    .nav-brand { font-weight: 700; font-size: 1.1rem; color: var(--green-primary); white-space: nowrap; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 0.25rem; list-style: none; }
+    .nav-links a {
+      padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.82rem;
+      font-weight: 600; color: var(--text-primary);
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover { background: var(--green-primary); color: white; text-decoration: none; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 40%, #1565c0 100%);
+      color: white; text-align: center; padding: 3.5rem 1rem 3rem;
+    }
+    .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 800; margin-bottom: 0.5rem; }
+    .hero .subtitle { font-size: 1.1rem; opacity: 0.9; margin-bottom: 1.5rem; }
+    .hero-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+    .hero-badge {
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+      padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+    }
+    .joker-card-banner {
+      background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 12px; padding: 0.8rem 1.5rem; display: inline-block; margin-top: 1.5rem;
+      font-size: 0.9rem; font-weight: 600;
+    }
+
+    /* SECTIONS */
+    .container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1rem; }
+    .section-header { text-align: center; margin-bottom: 2rem; }
+    .section-header h2 { font-size: 1.9rem; font-weight: 800; color: var(--green-primary); margin-bottom: 0.4rem; }
+    .section-header p { color: var(--text-secondary); font-size: 1rem; }
+
+    /* CARDS */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .card {
+      background: var(--card-bg); border-radius: 14px;
+      box-shadow: 0 3px 12px var(--shadow); overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border-color);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px var(--shadow-hover); }
+    .card-header { padding: 1.2rem 1.2rem 0; }
+    .card-header h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .card-body { padding: 0.8rem 1.2rem 1.2rem; }
+    .card-body p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 0.5rem; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.7rem 0; }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-green { background: #e8f5e9; color: #1b5e20; }
+    .badge-blue { background: #e3f2fd; color: #0d47a1; }
+    .badge-orange { background: #fff3e0; color: #e65100; }
+    .badge-red { background: #fce4ec; color: #880e4f; }
+    .badge-grey { background: var(--badge-bg); color: var(--text-secondary); }
+    [data-theme="dark"] .badge-green { background: #1b3320; color: #81c784; }
+    [data-theme="dark"] .badge-blue { background: #0d1e3a; color: #64b5f6; }
+    [data-theme="dark"] .badge-orange { background: #2d1a00; color: #ffb74d; }
+    [data-theme="dark"] .badge-red { background: #2d0a18; color: #f48fb1; }
+
+    .highlight { color: var(--green-primary); font-weight: 700; }
+    .info-row { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.85rem; color: var(--text-secondary); margin: 0.25rem 0; }
+    .info-row span:first-child { flex-shrink: 0; }
+    .card-links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--border-color); }
+    .btn-sm {
+      padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+      background: var(--green-primary); color: white;
+      transition: background 0.2s; display: inline-block;
+    }
+    .btn-sm:hover { background: #1b5e20; text-decoration: none; color: white; }
+    .btn-sm.outline {
+      background: transparent; color: var(--green-primary);
+      border: 1.5px solid var(--green-primary);
+    }
+    .btn-sm.outline:hover { background: var(--green-primary); color: white; }
+
+    /* DIFFICULTY BAR */
+    .difficulty { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); }
+    .diff-dots { display: flex; gap: 3px; }
+    .diff-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-color); }
+    .diff-dot.active-easy { background: #4caf50; }
+    .diff-dot.active-medium { background: #ff9800; }
+    .diff-dot.active-hard { background: #f44336; }
+
+    /* TAGESPLAN */
+    .day-card {
+      background: var(--card-bg); border-radius: 14px; margin-bottom: 1rem;
+      border: 1px solid var(--border-color); overflow: hidden;
+    }
+    .day-header {
+      background: linear-gradient(90deg, var(--green-primary), #388e3c);
+      color: white; padding: 0.8rem 1.2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; user-select: none;
+    }
+    .day-header h3 { font-size: 1rem; font-weight: 700; }
+    .day-content { padding: 1rem 1.2rem; display: none; }
+    .day-content.open { display: block; }
+    .timeline { list-style: none; }
+    .timeline li {
+      display: flex; gap: 1rem; padding: 0.4rem 0;
+      border-left: 3px solid var(--green-light); padding-left: 1rem; margin-left: 0.5rem;
+      position: relative; font-size: 0.9rem; color: var(--text-secondary);
+    }
+    .timeline li::before {
+      content: ''; position: absolute; left: -7px; top: 8px;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--green-primary); border: 2px solid var(--card-bg);
+    }
+    .timeline .time { font-weight: 700; color: var(--green-primary); min-width: 50px; flex-shrink: 0; }
+    .timeline .activity { color: var(--text-primary); }
+
+    /* KARTE */
+    #map { width: 100%; height: 480px; border-radius: 12px; box-shadow: 0 4px 12px var(--shadow); }
+
+    /* PRAKTISCHE HINWEISE */
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+    .info-card {
+      background: var(--card-bg); border-radius: 12px; padding: 1.2rem;
+      border: 1px solid var(--border-color); box-shadow: 0 2px 8px var(--shadow);
+    }
+    .info-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--green-primary); }
+    .info-card ul { list-style: none; }
+    .info-card ul li { padding: 0.25rem 0; font-size: 0.88rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
+    .info-card ul li:last-child { border-bottom: none; }
+
+    /* JOKER CARD HIGHLIGHT */
+    .joker-highlight {
+      background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+      border: 2px solid var(--green-primary); border-radius: 14px;
+      padding: 1.5rem; margin: 1.5rem 0; text-align: center;
+    }
+    [data-theme="dark"] .joker-highlight { background: linear-gradient(135deg, #1b3320, #0d1e3a); }
+    .joker-highlight h3 { color: var(--green-primary); font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .joker-features { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 0.8rem; }
+    .joker-feature { background: white; border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.85rem; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    [data-theme="dark"] .joker-feature { background: var(--card-bg); }
+
+    /* BACK TO TOP + THEME TOGGLE */
+    .back-to-top {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--green-primary); color: white;
+      width: 46px; height: 46px; border-radius: 50%; border: none;
+      cursor: pointer; font-size: 1.2rem;
+      box-shadow: 0 4px 12px var(--shadow); z-index: 99;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s;
+    }
+    .back-to-top:hover { transform: translateY(-4px); }
+    .theme-toggle {
+      position: fixed; bottom: 5.5rem; right: 2rem;
+      background: var(--card-bg); color: var(--text-primary);
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid var(--border-color); cursor: pointer; font-size: 1.3rem;
+      box-shadow: 0 4px 12px var(--shadow); z-index: 99;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+    }
+    .theme-toggle:hover { transform: translateY(-4px) rotate(20deg); border-color: var(--green-primary); }
+
+    /* SECTION DIVIDER */
+    section { border-bottom: 1px solid var(--border-color); }
+    section:last-of-type { border-bottom: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.6rem; }
+      .nav-links { gap: 0.15rem; }
+      .nav-links a { font-size: 0.75rem; padding: 0.25rem 0.45rem; }
+    }
+
+    @media print {
+      nav, .back-to-top, .theme-toggle { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav id="top">
+  <div class="nav-inner">
+    <span class="nav-brand">🏔️ Saalbach 2026</span>
+    <ul class="nav-links">
+      <li><a href="#wanderrouten">🥾 Wandern</a></li>
+      <li><a href="#aktivitaeten">🎯 Aktivitäten</a></li>
+      <li><a href="#restaurants">🍽️ Restaurants</a></li>
+      <li><a href="#geheimtipps">💡 Geheimtipps</a></li>
+      <li><a href="#tagesplan">📅 Tagesplan</a></li>
+      <li><a href="#karte">🗺️ Karte</a></li>
+      <li><a href="#hinweise">ℹ️ Hinweise</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🏔️ Saalbach-Hinterglemm</h1>
+  <p class="subtitle">Familienreise 20.–30. August 2026 · Das Tal der Spiele</p>
+  <div class="hero-badges">
+    <span class="hero-badge">👨‍👩‍👧‍👦 2 Erwachsene + Junge (8) + Mädchen (11)</span>
+    <span class="hero-badge">📅 10 Nächte · 11 Tage</span>
+    <span class="hero-badge">📍 Radius 70 km</span>
+    <span class="hero-badge">🚶 max. 15 km/Tag</span>
+  </div>
+  <div class="joker-card-banner">
+    🃏 <strong>JOKER CARD</strong> im Hotel inklusive! · Bergbahnen gratis · Gültig 22.05.–26.10.2026 ✅
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- WANDERROUTEN -->
+<!-- ══════════════════════════════════════════ -->
+<section id="wanderrouten">
+  <div class="container">
+    <div class="section-header">
+      <h2>🥾 Wanderrouten für Familien</h2>
+      <p>Alle Routen für Kinder (8 & 11 J.) geeignet · max. 15 km/Tag · Start 09:00 Uhr</p>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Highlight</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder perfekt</span>
+            <span class="badge badge-green">🃏 JOKER CARD</span>
+          </div>
+          <h3>🌲 Baumzipfelweg & Gipfelspielplatz Schattberg</h3>
+        </div>
+        <div class="card-body">
+          <p>Europas höchstgelegener Wipfelwanderweg auf ca. 2.000 m Höhe – traumhafte Aussicht auf das Glemmtal. Direkt an der Schattberg X-press Bergstation befindet sich auch der Gipfelspielplatz mit Rutschen und Kletterangeboten.</p>
+          <div class="info-row"><span>⏱️</span><span>2–3 Stunden inkl. Spielplatz</span></div>
+          <div class="info-row"><span>📏</span><span>ca. 2–3 km (Weg + Rückweg per Gondel)</span></div>
+          <div class="info-row"><span>🚡</span><span>Schattberg X-press ab Saalbach Ort · <strong>JOKER CARD: kostenlos!</strong></span></div>
+          <div class="info-row"><span>🏔️</span><span>ca. 2.020 m Gipfelhöhe · Panorama 360°</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer-Betrieb · August ✅</span></div>
+          <div class="difficulty" style="margin-top:0.5rem">
+            <span>Schwierigkeit:</span>
+            <div class="diff-dots">
+              <div class="diff-dot active-easy"></div>
+              <div class="diff-dot"></div>
+              <div class="diff-dot"></div>
+            </div>
+            <span>Leicht</span>
+          </div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/sommer/bergbahnen" class="btn-sm" target="_blank">🚡 Bergbahnen Info</a>
+            <a href="https://maps.google.com/?q=Schattberg+X-press+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Highlight</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder perfekt</span>
+          </div>
+          <h3>🧭 Montelino's Erlebnisweg</h3>
+        </div>
+        <div class="card-body">
+          <p>Einer der beliebtesten Familienwege im Glemmtal! Entlang des thematisch gestalteten Erlebnisweges warten Spielstationen, Naturerlebnisse und Entdeckungen auf Kinder. Kein Auto, kein Stress – einfach loswandern.</p>
+          <div class="info-row"><span>⏱️</span><span>2–3 Stunden</span></div>
+          <div class="info-row"><span>📏</span><span>ca. 4–5 km (Runde)</span></div>
+          <div class="info-row"><span>🚶</span><span>Start: direkt in Saalbach/Hinterglemm, kein Lift nötig</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · beste Zeit: Vormittags (kühler)</span></div>
+          <div class="difficulty" style="margin-top:0.5rem">
+            <div class="diff-dots">
+              <div class="diff-dot active-easy"></div>
+              <div class="diff-dot"></div>
+              <div class="diff-dot"></div>
+            </div>
+            <span>Leicht</span>
+          </div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/sommer/wandern-outdoor" class="btn-sm" target="_blank">🌐 Saalbach.com</a>
+            <a href="https://maps.google.com/?q=Montelino+Erlebnisweg+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familien</span>
+            <span class="badge badge-green">🃏 JOKER CARD</span>
+          </div>
+          <h3>🏔️ Panoramaweg Kohlmais</h3>
+        </div>
+        <div class="card-body">
+          <p>Mit der Kohlmaisbahn auf den Kohlmais (1.794 m), dann gemütlicher Panoramaweg mit herrlichem Blick auf Saalbach und das Glemmtal. Unterwegs laden Almen zur Einkehr ein – perfekt für eine Jause-Pause.</p>
+          <div class="info-row"><span>⏱️</span><span>2–3 Stunden (Wanderung)</span></div>
+          <div class="info-row"><span>📏</span><span>ca. 5–7 km (je nach Route)</span></div>
+          <div class="info-row"><span>🚡</span><span>Kohlmaisbahn · <strong>JOKER CARD: kostenlos!</strong></span></div>
+          <div class="info-row"><span>🏔️</span><span>1.794 m · breite Wege, gut markiert</span></div>
+          <div class="info-row"><span>🍽️</span><span>Kohlmaishütte auf dem Weg</span></div>
+          <div class="difficulty" style="margin-top:0.5rem">
+            <div class="diff-dots">
+              <div class="diff-dot active-easy"></div>
+              <div class="diff-dot active-easy"></div>
+              <div class="diff-dot"></div>
+            </div>
+            <span>Leicht–Mittel</span>
+          </div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/sommer/bergbahnen" class="btn-sm" target="_blank">🚡 Bergbahnen Info</a>
+            <a href="https://maps.google.com/?q=Kohlmaisbahn+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-orange">🏃 Aktiv</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Ab 10 J.</span>
+          </div>
+          <h3>⛰️ Reiterkogel Rundwanderung</h3>
+        </div>
+        <div class="card-body">
+          <p>Der Reiterkogel (1.872 m) ist einer der klassischen Hausberg-Gipfel von Saalbach. Schöne Rundtour durch Almgelände, tolle Aussicht und überschaubare Höhenmeter – ideal für aktive Familien mit etwas Wandererfahrung.</p>
+          <div class="info-row"><span>⏱️</span><span>3–4 Stunden</span></div>
+          <div class="info-row"><span>📏</span><span>ca. 8–10 km</span></div>
+          <div class="info-row"><span>📈</span><span>ca. 500 Hm Aufstieg</span></div>
+          <div class="info-row"><span>⚠️</span><span>Festes Schuhwerk empfohlen</span></div>
+          <div class="difficulty" style="margin-top:0.5rem">
+            <div class="diff-dots">
+              <div class="diff-dot active-medium"></div>
+              <div class="diff-dot active-medium"></div>
+              <div class="diff-dot"></div>
+            </div>
+            <span>Mittel</span>
+          </div>
+          <div class="card-links">
+            <a href="https://www.bergfex.at/saalbach/wanderungen/touren/" class="btn-sm" target="_blank">🗺️ Bergfex</a>
+            <a href="https://maps.google.com/?q=Reiterkogel+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder</span>
+            <span class="badge badge-green">🃏 JOKER CARD</span>
+          </div>
+          <h3>🌄 12er Kogel Almwanderung</h3>
+        </div>
+        <div class="card-body">
+          <p>Mit der 12er KOGEL Bahn in Hinterglemm rauf, dann entspannt über Almwiesen wandern. Herrliche alpine Landschaft, ruhige Wege, Almhütten zur Einkehr. Perfekt für einen ruhigeren Wandertag.</p>
+          <div class="info-row"><span>⏱️</span><span>2–3 Stunden</span></div>
+          <div class="info-row"><span>📏</span><span>ca. 4–6 km</span></div>
+          <div class="info-row"><span>🚡</span><span>12er KOGEL Bahn Hinterglemm · <strong>JOKER CARD: kostenlos!</strong></span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · Almhütten geöffnet</span></div>
+          <div class="difficulty" style="margin-top:0.5rem">
+            <div class="diff-dots">
+              <div class="diff-dot active-easy"></div>
+              <div class="diff-dot"></div>
+              <div class="diff-dot"></div>
+            </div>
+            <span>Leicht</span>
+          </div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/sommer/bergbahnen" class="btn-sm" target="_blank">🚡 Bergbahnen</a>
+            <a href="https://maps.google.com/?q=12er+Kogel+Bahn+Hinterglemm" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder perfekt</span>
+          </div>
+          <h3>🌿 Almrunde Glemmtal – Tal der Almen</h3>
+        </div>
+        <div class="card-body">
+          <p>Gemütliche Talwanderung entlang des Glemmtals zwischen Saalbach und Hinterglemm. Flache Wege, Bach begleitet den Weg, zahlreiche Almen für Zwischenstopps. Ideal nach einem aktiven Tag oder als Abendspaziergang.</p>
+          <div class="info-row"><span>⏱️</span><span>1,5–2 Stunden</span></div>
+          <div class="info-row"><span>📏</span><span>ca. 4–6 km (Strecke Saalbach–Hinterglemm)</span></div>
+          <div class="info-row"><span>🚌</span><span>Rückfahrt per Bus (Glemmtaler Linienbus, inkl. JOKER CARD)</span></div>
+          <div class="info-row"><span>👣</span><span>Komplett flach, Kinderwagen-tauglich</span></div>
+          <div class="difficulty" style="margin-top:0.5rem">
+            <div class="diff-dots">
+              <div class="diff-dot active-easy"></div>
+              <div class="diff-dot"></div>
+              <div class="diff-dot"></div>
+            </div>
+            <span>Sehr leicht</span>
+          </div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/sommer/wandern-outdoor" class="btn-sm" target="_blank">🌐 Wandern Info</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .grid -->
+  </div>
+</section>
+<!-- ══════════════════════════════════════════ -->
+<!-- AKTIVITÄTEN -->
+<!-- ══════════════════════════════════════════ -->
+<section id="aktivitaeten">
+  <div class="container">
+    <div class="section-header">
+      <h2>🎯 Aktivitäten & Ausflüge</h2>
+      <p>Hochseilpark, Klammen, Rafting & mehr – alle im Radius 70 km</p>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Highlight</span>
+            <span class="badge badge-orange">🌊 Sehr beliebt</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder ab 7 J.</span>
+          </div>
+          <h3>🌲 Hochseilpark Saalbach – Größter Europas!</h3>
+        </div>
+        <div class="card-body">
+          <p>Der <strong>größte Hochseilpark Europas</strong> liegt direkt in Hinterglemm! Über 200 Kletterstationen auf 8 km Gesamtlänge. Für Kinder gibt es den <em>Mini Kids Parcours</em> (ab 4 J.), für Ältere spannende Parcours, den <em>Mega Flying Fox</em> und den <em>Giant Swing</em>. Dazu: <strong>Baumzipfelweg</strong> – Europas höchstgelegener Wipfelwanderweg!</p>
+          <div class="info-row"><span>📍</span><span>Talschlussweg 367, 5754 Hinterglemm (direkt vor Ort!)</span></div>
+          <div class="info-row"><span>📞</span><span><a href="tel:+4362172902">+43 6217 29029</a></span></div>
+          <div class="info-row"><span>⏱️</span><span>Halbtagsaktivität (3–5 Stunden)</span></div>
+          <div class="info-row"><span>🧒</span><span>Junge (8 J.): Standard-Parcours · Mädchen (11 J.): alle Parcours möglich</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer-Saison ✅ August geöffnet</span></div>
+          <div class="info-row"><span>⚠️</span><span>Bitte vorab Preise & Zeiten auf Website prüfen</span></div>
+          <div class="card-links">
+            <a href="https://www.hochseilpark.at" class="btn-sm" target="_blank">🌐 hochseilpark.at</a>
+            <a href="https://maps.google.com/?q=Hochseilpark+Saalbach+Hinterglemm" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Highlight</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder perfekt</span>
+          </div>
+          <h3>🌊 Käpt'n Hook Erlebnisfreibad Teufelswasser</h3>
+        </div>
+        <div class="card-body">
+          <p>Das Erlebnisfreibad Teufelswasser in Saalbach ist ein Muss für Familien! Mit Rutschen, Piratenschiff-Thema, Sprungbereichen und Planschbereich – hier kommen Kinder beider Altersgruppen voll auf ihre Kosten. Direkt im Ort, kein Anfahrtsweg nötig.</p>
+          <div class="info-row"><span>📍</span><span>Direkt in Saalbach Hinterglemm</span></div>
+          <div class="info-row"><span>⏱️</span><span>2–4 Stunden · Ideal als Nachmittagsaktivität</span></div>
+          <div class="info-row"><span>🧒</span><span>Für alle Altersgruppen geeignet</span></div>
+          <div class="info-row"><span>📅</span><span>Sommersaison ✅ August geöffnet</span></div>
+          <div class="info-row"><span>💡</span><span>Nachmittags nach Wanderung ideal</span></div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/sommer/aktivitaeten" class="btn-sm" target="_blank">🌐 Saalbach.com</a>
+            <a href="https://maps.google.com/?q=Teufelswasser+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Highlight</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Ab 6 J.</span>
+            <span class="badge badge-grey">📍 ~35 km</span>
+          </div>
+          <h3>💧 Kitzlochklamm Taxenbach</h3>
+        </div>
+        <div class="card-body">
+          <p>Spektakuläre Schlucht am Rand des Nationalparks Hohe Tauern! Einzigartige Felsformationen, tosende Wasserfälle, mystische Buchten. Brücken und Stege führen durch die Klamm zum Aussichtspunkt <em>„Klammauge"</em>. Auch bei leichtem Regen ein tolles Erlebnis!</p>
+          <div class="info-row"><span>📍</span><span>Kitzlochklammstraße 16, 5660 Taxenbach (~35 km, ca. 35 Min.)</span></div>
+          <div class="info-row"><span>📞</span><span><a href="tel:+4365435219">+43 6543 5219</a> · <a href="mailto:info@taxenbach.at">info@taxenbach.at</a></span></div>
+          <div class="info-row"><span>⏱️</span><span>1,5–2 Stunden (Hin- und Rückweg)</span></div>
+          <div class="info-row"><span>📅</span><span>Mai – Oktober ✅ · August ideal</span></div>
+          <div class="info-row"><span>💶</span><span>Erhaltungsbeitrag · Nur Barzahlung!</span></div>
+          <div class="info-row"><span>⚠️</span><span>Kein Kinderwagen · Kein Rollstuhl · Festes Schuhwerk empfohlen</span></div>
+          <div class="info-row"><span>🌧️</span><span>Leichter Regen kein Problem · Bei Starkregen evtl. gesperrt</span></div>
+          <div class="card-links">
+            <a href="https://www.kitzlochklamm.at" class="btn-sm" target="_blank">🌐 kitzlochklamm.at</a>
+            <a href="https://maps.google.com/?q=Kitzlochklamm+Taxenbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Highlight</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+            <span class="badge badge-grey">📍 ~25 km</span>
+          </div>
+          <h3>💧 Sigmund-Thun-Klamm Kaprun</h3>
+        </div>
+        <div class="card-body">
+          <p>Die beeindruckende Klamm im Kesselfalltal bei Kaprun – wilder Gebirgsbach, dramatische Felswände und stimmungsvolle Stege. Gut kombinierbar mit einem Ausflug zu den Kaprun Hochgebirgs-Stauseen oder dem Tauern Spa Kaprun.</p>
+          <div class="info-row"><span>📍</span><span>Kesselfallstraße, 5710 Kaprun (~25 km, ca. 25 Min.)</span></div>
+          <div class="info-row"><span>📞</span><span><a href="tel:+436818492473">+43 681 84924737</a></span></div>
+          <div class="info-row"><span>⏱️</span><span>1–1,5 Stunden</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer-Saison ✅ August geöffnet</span></div>
+          <div class="info-row"><span>💡</span><span>Gut kombinierbar mit Kaprun Stauseen (gleiche Richtung)</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Sigmund+Thun+Klamm+Kaprun" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-orange">🏄 Abenteuer</span>
+            <span class="badge badge-grey">📍 ~35 km</span>
+          </div>
+          <h3>🚣 Raftingcenter Taxenbach</h3>
+        </div>
+        <div class="card-body">
+          <p>Rafting auf der Salzach – direkt bei der Kitzlochklamm! Verschiedene Schwierigkeitsgrade und Touren-Längen. Gut kombinierbar: Vormittags Kitzlochklamm, Nachmittags Rafting. Altersbeschränkungen bitte vorab prüfen (meist ab 8–10 Jahre).</p>
+          <div class="info-row"><span>📍</span><span>Marktstraße 1, 5660 Taxenbach (~35 km)</span></div>
+          <div class="info-row"><span>📞</span><span><a href="tel:+436644025149">+43 664 4025149</a></span></div>
+          <div class="info-row"><span>⏱️</span><span>1,5–3 Stunden (je nach Tour)</span></div>
+          <div class="info-row"><span>🧒</span><span>Mindestalter je nach Tour – vorab erfragen!</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · Buchung empfohlen</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Raftingcenter+Taxenbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-orange">⚡ Nervenkitzel</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Ab 8 J.</span>
+            <span class="badge badge-grey">📍 ~20 km</span>
+          </div>
+          <h3>🦅 Flying Fox XXL Leogang</h3>
+        </div>
+        <div class="card-body">
+          <p>Der Flying Fox XXL in Leogang gehört zu den längsten und spektakulärsten Ziplines in Österreich! Mit bis zu 130 km/h über die Berge fliegen – ein unvergessliches Erlebnis für mutige Kinder und Erwachsene. Gut mit Schaubergwerk Leogang kombinierbar.</p>
+          <div class="info-row"><span>📍</span><span>Leogang (~20 km, ca. 20 Min.)</span></div>
+          <div class="info-row"><span>⏱️</span><span>ca. 1–2 Stunden</span></div>
+          <div class="info-row"><span>🧒</span><span>Mindestalter und Gewichtslimits beachten – vorab prüfen!</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Flying+Fox+XXL+Leogang" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Ausflugsziel</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+            <span class="badge badge-grey">📍 ~30 km</span>
+          </div>
+          <h3>🏔️ Kaprun Hochgebirgs-Stauseen</h3>
+        </div>
+        <div class="card-body">
+          <p>Die beeindruckenden Stauseen Mooserboden und Wasserfallboden im Nationalpark Hohe Tauern – ein Naturwunder! Mit der historischen Kesselfallbahn und Schrägaufzügen hinauf zu 2.000 m. Einzigartiges Bergpanorama, türkisblaue Seen – unvergesslich!</p>
+          <div class="info-row"><span>📍</span><span>Kesselfallstraße 98, 5710 Kaprun (~30 km)</span></div>
+          <div class="info-row"><span>📞</span><span><a href="tel:+43503132320">+43 50313 23201</a></span></div>
+          <div class="info-row"><span>⏱️</span><span>3–4 Stunden (inkl. Auffahrt)</span></div>
+          <div class="info-row"><span>💶</span><span>Ticket für Kesselfallbahn erforderlich</span></div>
+          <div class="info-row"><span>🌡️</span><span>Auf 2.000 m kühler! Jacke einpacken</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · August geöffnet</span></div>
+          <div class="card-links">
+            <a href="https://www.verbund.com/de-at/privatkunden/erlebnis/kaprun" class="btn-sm" target="_blank">🌐 Info</a>
+            <a href="https://maps.google.com/?q=Kaprun+Hochgebirgs+Stauseen" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">🏊 Baden</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+            <span class="badge badge-grey">📍 ~30 km</span>
+          </div>
+          <h3>🏖️ Strandbäder Zell am See</h3>
+        </div>
+        <div class="card-body">
+          <p>Der Zeller See ist einer der schönsten Bergseen Österreichs – klares Wasser, Alpenpanorama, kinderfreundliche Badebereiche. Verschiedene Strandbäder rund um den See. Im August angenehme Wassertemperaturen (~20°C). Auch Tretboot, Segeln und Schifffahrt möglich.</p>
+          <div class="info-row"><span>📍</span><span>Zell am See (~30 km, ca. 30 Min.)</span></div>
+          <div class="info-row"><span>⏱️</span><span>Halbtag bis ganzer Tag</span></div>
+          <div class="info-row"><span>🌡️</span><span>Wassertemperatur August: ca. 19–22°C</span></div>
+          <div class="info-row"><span>🌊</span><span>Wochentags deutlich ruhiger als am Wochenende!</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · August Hochsaison</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Strandbad+Zell+am+See" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Naturwunder</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+            <span class="badge badge-grey">📍 ~45 km</span>
+          </div>
+          <h3>❄️ Weißsee Gletscherwelt</h3>
+        </div>
+        <div class="card-body">
+          <p>Auf 2.300 m der türkisblaue Weißsee – eingebettet in alpine Gletscherlandschaft. Keine Skifahrer im Sommer, dafür atemberaubendes Panorama, Wanderwege, Spielbereich und das einzigartige Alpengefühl. Jackenpflicht! Auch an warmen Augusttagen ist es hier oben kühl.</p>
+          <div class="info-row"><span>📍</span><span>Stubach 90, 5723 Uttendorf (~45 km, ca. 45 Min.)</span></div>
+          <div class="info-row"><span>⏱️</span><span>Halbtag bis Ganztag (inkl. Gondelfahrten)</span></div>
+          <div class="info-row"><span>🌡️</span><span>Auf 2.300 m ca. 5–12°C kühler als im Tal</span></div>
+          <div class="info-row"><span>💡</span><span>Warme Jacken und Sonnenschutz einpacken</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · August geöffnet</span></div>
+          <div class="card-links">
+            <a href="https://www.weissee.com" class="btn-sm" target="_blank">🌐 weissee.com</a>
+            <a href="https://maps.google.com/?q=Weißsee+Gletscherwelt+Uttendorf" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .grid -->
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- RESTAURANTS & HÜTTEN -->
+<!-- ══════════════════════════════════════════ -->
+<section id="restaurants">
+  <div class="container">
+    <div class="section-header">
+      <h2>🍽️ Restaurants, Hütten & Almen</h2>
+      <p>Kinderfreundliche Einkehrmöglichkeiten – vom Almhüttencharme bis zum Dorfgasthaus</p>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Empfehlung</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinderfreundlich</span>
+          </div>
+          <h3>🏠 Hinterhag Alm · Hinterglemm</h3>
+        </div>
+        <div class="card-body">
+          <p>Rustikale Almhütte mit traditioneller österreichischer Küche, direkt im Tal Hinterglemm. Gemütliche Atmosphäre, große Terrasse, klassische Almgerichte wie Kaiserschmarrn, Tiroler Gröstl und Käsespätzle. Ein Lieblingsplatz von Einheimischen und Gästen.</p>
+          <div class="info-row"><span>📍</span><span>Hinterglemm</span></div>
+          <div class="info-row"><span>🍴</span><span>Österreichisch · Almküche</span></div>
+          <div class="info-row"><span>💶</span><span>€€ · Familienportionen verfügbar</span></div>
+          <div class="info-row"><span>🧒</span><span>Kinderkarte vorhanden · Spielbereich</span></div>
+          <div class="card-meta"><span class="badge badge-grey">🪑 Dine-in</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Hinterhag+Alm+Hinterglemm" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">🃏 JOKER CARD</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinderfreundlich</span>
+          </div>
+          <h3>🏔️ Kohlmaishütte · Saalbach</h3>
+        </div>
+        <div class="card-body">
+          <p>Gemütliche Hütte auf dem Kohlmais (ca. 1.700 m), erreichbar mit der Kohlmaisbahn. Perfekter Mittagsstopp nach der Panoramawanderung! Hausgemachte Speisen, Almjause, Gulasch und Kaiserschmarrn mit Bergblick – das ist echter Alpenurlaub.</p>
+          <div class="info-row"><span>📍</span><span>Kohlmais, ca. 1.700 m · per Kohlmaisbahn (JOKER CARD: kostenlos!)</span></div>
+          <div class="info-row"><span>🍴</span><span>Almküche · Jause · Suppen</span></div>
+          <div class="info-row"><span>💶</span><span>€€</span></div>
+          <div class="info-row"><span>📅</span><span>Sommer ✅ · Mittags ideal</span></div>
+          <div class="card-meta"><span class="badge badge-grey">🪑 Dine-in</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Kohlmaishütte+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinderfreundlich</span>
+          </div>
+          <h3>🌿 Unterschwarzachalm · Hinterglemm</h3>
+        </div>
+        <div class="card-body">
+          <p>Charmante Alm im Glemmtal, gut zu Fuß erreichbar. Typische Almspezialitäten, frische Milchprodukte direkt von der Alm, hausgemachte Mehlspeisen. Schöner Ausblick, ruhige Lage – ein echter Geheimtipp für Almflair ohne Touristenmassen.</p>
+          <div class="info-row"><span>📍</span><span>Glemmtal, Hinterglemm · zu Fuß erreichbar</span></div>
+          <div class="info-row"><span>🍴</span><span>Almküche · Jause · Frischkäse</span></div>
+          <div class="info-row"><span>💶</span><span>€ – €€</span></div>
+          <div class="info-row"><span>⚠️</span><span>Öffnungszeiten vorab prüfen (saisonal)</span></div>
+          <div class="card-meta"><span class="badge badge-grey">🪑 Dine-in</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Unterschwarzachalm+Hinterglemm" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Geheimtipp</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+          </div>
+          <h3>🌄 Lindlingalm · Glemmtal</h3>
+        </div>
+        <div class="card-body">
+          <p>Ursprüngliche Almhütte im Glemmtal mit herrlichem Blick auf die umliegenden Berge. Weniger bekannt als die großen Hütten – dafür authentischer Almcharakter und weniger Touristen. Hausgemachte Speisen, gemütliche Holzterrasse.</p>
+          <div class="info-row"><span>📍</span><span>Glemmtal · per Wanderung oder E-Bike</span></div>
+          <div class="info-row"><span>🍴</span><span>Almküche · Kaiserschmarrn · Germknödel</span></div>
+          <div class="info-row"><span>💶</span><span>€€</span></div>
+          <div class="info-row"><span>⚠️</span><span>Öffnungszeiten vorab prüfen</span></div>
+          <div class="card-meta"><span class="badge badge-grey">🪑 Dine-in</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Lindlingalm+Saalbach" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+          </div>
+          <h3>🏘️ Dorfgasthäuser in Saalbach</h3>
+        </div>
+        <div class="card-body">
+          <p>Im Ortskern Saalbach gibt es mehrere familienfreundliche Restaurants und Gasthäuser mit österreichischer und internationaler Küche – ideal für Abendessen nach einem aktiven Tag. Viele bieten Kinderkarten und Spielecken.</p>
+          <div class="info-row"><span>📍</span><span>Saalbach Ortskern · direkt erreichbar</span></div>
+          <div class="info-row"><span>🍴</span><span>Österreichisch / International / Pizza</span></div>
+          <div class="info-row"><span>💶</span><span>€€ – €€€</span></div>
+          <div class="info-row"><span>📞</span><span>Reservierung abends empfohlen (Hochsaison August!)</span></div>
+          <div class="card-meta"><span class="badge badge-grey">🪑 Dine-in</span></div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/service/gastronomie" class="btn-sm" target="_blank">🍽️ Alle Restaurants</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-orange">☀️ Terrasse</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+            <span class="badge badge-green">🃏 JOKER CARD</span>
+          </div>
+          <h3>🏔️ Bergrestaurants mit JOKER CARD</h3>
+        </div>
+        <div class="card-body">
+          <p>An den Bergstationen der Gondeln gibt es Bergrestaurants mit Panoramaterrassen – erreichbar per Gondel (mit JOKER CARD kostenlos!). Perfekt für Mittagessen mit Aussicht auf 1.700–2.000 m. Schattberghaus, Westgipfelhütte und weitere Hütten laden ein.</p>
+          <div class="info-row"><span>🚡</span><span>Erreichbar per JOKER CARD Gondeln (gratis!)</span></div>
+          <div class="info-row"><span>🍴</span><span>Almküche · Suppen · Snacks · Kuchen</span></div>
+          <div class="info-row"><span>💶</span><span>€€ – €€€ (Bergpreise)</span></div>
+          <div class="info-row"><span>📅</span><span>Nur in Sommerbetriebszeiten der Gondeln</span></div>
+          <div class="card-meta"><span class="badge badge-grey">🪑 Dine-in</span></div>
+          <div class="card-links">
+            <a href="https://www.saalbach.com/de/service/gastronomie/sommerhuetten" class="btn-sm" target="_blank">🏔️ Sommerhütten</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .grid -->
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- GEHEIMTIPPS -->
+<!-- ══════════════════════════════════════════ -->
+<section id="geheimtipps">
+  <div class="container">
+    <div class="section-header">
+      <h2>💡 Geheimtipps & Insider-Empfehlungen</h2>
+      <p>Weniger bekannte Highlights – für Familien, die mehr entdecken möchten</p>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Insider</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder</span>
+          </div>
+          <h3>🪵 Schnitza's Holzpark</h3>
+        </div>
+        <div class="card-body">
+          <p>Ein einzigartiger Spielpark aus Holz – alles aus natürlichen Materialien. Kinder können sägen, bauen und konstruieren. Weniger bekannt als der Hochseilpark, aber genauso begeisternd für kreative Kinder. Ruhiger, authentischer Alpencharakter.</p>
+          <div class="info-row"><span>📍</span><span>Saalbach Hinterglemm</span></div>
+          <div class="info-row"><span>🧒</span><span>Ideal für 6–12 Jahre</span></div>
+          <div class="info-row"><span>💡</span><span>Wenig bekannt – daher oft ruhiger</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Insider</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Kinder</span>
+          </div>
+          <h3>🏔️ Der Berg Kodok</h3>
+        </div>
+        <div class="card-body">
+          <p>Ein thematisches Bergerlebnis rund um die Figur Kodok – spezielle Entdeckungspfade und Spielstationen. Teil des „Tal der Spiele"-Konzepts von Saalbach. Gute Alternative zum Hochseilpark für kleinere Kinder oder regnerische Tage.</p>
+          <div class="info-row"><span>📍</span><span>Saalbach Hinterglemm</span></div>
+          <div class="info-row"><span>🧒</span><span>Ideal für jüngere Kinder</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">🃏 JOKER CARD</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+          </div>
+          <h3>🧭 Geocaching im Glemmtal</h3>
+        </div>
+        <div class="card-body">
+          <p>Offiziell als Inklusivleistung bei der JOKER CARD! Schatzsuche mit GPS-App durch das Glemmtal – macht Wanderungen für Kinder viel aufregender. Koordinaten und App-Infos beim Hotel oder auf der Tourismuswebsite erhältlich.</p>
+          <div class="info-row"><span>📍</span><span>Gesamtes Glemmtal · viele Caches versteckt</span></div>
+          <div class="info-row"><span>🃏</span><span>Im JOKER CARD Paket inkludiert</span></div>
+          <div class="info-row"><span>💡</span><span>Macht jede Wanderung zum Abenteuer!</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-orange">🌅 Früh aufstehen</span>
+          </div>
+          <h3>🌄 Sonnenaufgang am Schattberg</h3>
+        </div>
+        <div class="card-body">
+          <p>Die erste Gondel (ca. 09:00 Uhr) auf den Schattberg – wer früh startet, hat den Gipfelspielplatz und den Baumzipfelweg noch für sich allein. Im August scheint die Sonne früh, keine Touristenmassen vor 10 Uhr. Das beste Fotolicht des Tages!</p>
+          <div class="info-row"><span>⏰</span><span>Erste Gondel ca. 09:00 · Ruhig bis ca. 10:30</span></div>
+          <div class="info-row"><span>📸</span><span>Bestes Panoramafoto-Licht am frühen Morgen</span></div>
+          <div class="info-row"><span>🃏</span><span>JOKER CARD: Gondel kostenlos!</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-blue">🏊 Baden</span>
+            <span class="badge badge-green">✨ Ruhig</span>
+          </div>
+          <h3>💧 Naturbad Glemmtal</h3>
+        </div>
+        <div class="card-body">
+          <p>Der kleine Badeteich/Badesee im Glemmtal ist ein echter Geheimtipp! Natürliches Wasser, weniger überfüllt als die großen Seen, Bergpanorama inklusive. Ideal für einen entspannten Nachmittag nach einer Vormittags-Wanderung.</p>
+          <div class="info-row"><span>📍</span><span>Glemmtal · genaue Position beim Hotel erfragen</span></div>
+          <div class="info-row"><span>🌡️</span><span>Wasser im August ca. 18–22°C</span></div>
+          <div class="info-row"><span>✨</span><span>Meist deutlich ruhiger als Zell am See</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-meta" style="margin-bottom:0.4rem">
+            <span class="badge badge-green">⭐ Geheimtipp</span>
+            <span class="badge badge-blue">👨‍👩‍👧‍👦 Familie</span>
+            <span class="badge badge-grey">📍 ~15 km</span>
+          </div>
+          <h3>⛏️ Schaubergwerk Leogang</h3>
+        </div>
+        <div class="card-body">
+          <p>Eines der ältesten Bergwerke in den Alpen – eine faszinierende Entdeckungsreise in die Unterwelt! Im Bergwerk ist es das ganze Jahr über kühl (~10°C), perfekt für heiße Sommertage. Mit JOKER CARD Bonus-Ermäßigung!</p>
+          <div class="info-row"><span>📍</span><span>Leogang (~15 km, ca. 15 Min.)</span></div>
+          <div class="info-row"><span>🌡️</span><span>Im Bergwerk: ca. 10°C → Jacke einpacken!</span></div>
+          <div class="info-row"><span>🃏</span><span>JOKER CARD Bonuspartner – Ermäßigung</span></div>
+          <div class="info-row"><span>💡</span><span>Ideal an heißen oder regnerischen Tagen</span></div>
+          <div class="card-links">
+            <a href="https://maps.google.com/?q=Schaubergwerk+Leogang" class="btn-sm outline" target="_blank">📍 Maps</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .grid -->
+  </div>
+</section>
+<!-- ══════════════════════════════════════════ -->
+<!-- 10-TAGES-PLAN -->
+<!-- ══════════════════════════════════════════ -->
+<section id="tagesplan">
+  <div class="container">
+    <div class="section-header">
+      <h2>📅 10-Tages-Plan: 20.–30. August 2026</h2>
+      <p>Tagesstart 09:00 · Rückkehr bis 18:00 · max. 15 km/Tag · Radius 70 km · Klick zum Aufklappen</p>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>📦 Tag 1 – Do, 20.08. · Ankunft & Orientierung</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">Nachm.</span><span class="activity">Ankunft & Einchecken ins Hotel · JOKER CARD beim Gastgeber abholen</span></li>
+          <li><span class="time">16:00</span><span class="activity">🚶 Spaziergang durch Saalbach Ortskern · Orientierung, Supermarkt, erste Eindrücke</span></li>
+          <li><span class="time">17:00</span><span class="activity">Badeteich/Freizeitanlage im Ort (wenn noch fit)</span></li>
+          <li><span class="time">19:00</span><span class="activity">🍽️ Abendessen im Dorf – entspannt ankommen</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">💡 Tipp: JOKER CARD in der Hotel-App aktivieren und Wanderkarte holen!</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🌲 Tag 2 – Fr, 21.08. · Hochseilpark Hinterglemm ⭐</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚗 Fahrt Hochseilpark Hinterglemm (10 Min.) · Talschlussweg 367</span></li>
+          <li><span class="time">09:30</span><span class="activity">🌲 Hochseilpark: Einweisung & Mini Kids Parcours (Junge 8 J.) + Standard-Parcours (Mädchen 11 J.)</span></li>
+          <li><span class="time">11:30</span><span class="activity">🦅 Giant Swing oder Mega Flying Fox (wenn Lust auf mehr!)</span></li>
+          <li><span class="time">13:00</span><span class="activity">🍽️ Mittagessen – Almhütte in der Nähe oder Picknick</span></li>
+          <li><span class="time">14:30</span><span class="activity">🌲 Baumzipfelweg (Einstieg über Hochseilpark-Bereich) · Europas höchstgelegener Wipfelweg</span></li>
+          <li><span class="time">16:30</span><span class="activity">🏡 Rückfahrt · Entspannen</span></li>
+          <li><span class="time">19:00</span><span class="activity">🍽️ Abendessen · Hinterhag Alm (Reservierung empfohlen)</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">📊 Distanzen: ca. 2–4 km zu Fuß · leicht · 🕘 Großteil stehend/kletternd</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🏔️ Tag 3 – Sa, 22.08. · Schattberg & Baumzipfelweg ⭐</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück · Früh los für ruhigere Gondel</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚡 Schattberg X-press (JOKER CARD: kostenlos!) · Bergstation ~2.020 m</span></li>
+          <li><span class="time">09:30</span><span class="activity">🌲 Baumzipfelweg – Europas höchstgelegener Wipfelwanderweg · ca. 2 km</span></li>
+          <li><span class="time">10:30</span><span class="activity">🛝 Gipfelspielplatz Schattberg – Rutschen, Klettern, Panorama</span></li>
+          <li><span class="time">12:00</span><span class="activity">🍽️ Mittagessen Schattberghaus (Bergrestaurant) mit 360°-Aussicht</span></li>
+          <li><span class="time">13:30</span><span class="activity">🥾 Abstieg zu Fuß (ca. 2–3 Std.) oder Rückfahrt per Gondel</span></li>
+          <li><span class="time">16:00</span><span class="activity">💧 Teufelswasser Freibad – Nachmittags-Abkühlung!</span></li>
+          <li><span class="time">18:00</span><span class="activity">🏡 Rückkehr · Abendessen Dorf</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">🌊 Wochenende → Gondel kann etwas voller sein. Früh starten lohnt sich! · 📊 ~4–8 km je nach Abstiegsweg</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>💧 Tag 4 – So, 23.08. · Kitzlochklamm & Rafting</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück · früh starten (Klamm wird mittags voller)</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚗 Fahrt Taxenbach (~35 km, ca. 35 Min.) · Kitzlochklammstraße 16</span></li>
+          <li><span class="time">10:00</span><span class="activity">💧 Kitzlochklamm – spektakuläre Schlucht, Brücken, Klammauge · ca. 1,5 Std.</span></li>
+          <li><span class="time">11:30</span><span class="activity">☀️ Pause & Mittagessen in Taxenbach (Restaurant/Jause)</span></li>
+          <li><span class="time">13:00</span><span class="activity">🚣 Raftingcenter Taxenbach (optional – Mindestalter prüfen!) · Marktstraße 1</span></li>
+          <li><span class="time">15:30</span><span class="activity">🚗 Rückfahrt Saalbach</span></li>
+          <li><span class="time">17:00</span><span class="activity">🏡 Entspannen · evtl. kurzer Abendspaziergang Glemmtal</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">💡 Barzahlung für Klamm-Eintritt mitbringen! · 📊 Klamm: ~2–3 km Fußweg</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🧭 Tag 5 – Mo, 24.08. · Montelino's Erlebnisweg & Teufelswasser</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück</span></li>
+          <li><span class="time">09:00</span><span class="activity">🧭 Montelino's Erlebnisweg – Startpunkt Saalbach/Hinterglemm · thematischer Familienweg mit Stationen</span></li>
+          <li><span class="time">11:30</span><span class="activity">🍽️ Mittagessen auf Alm oder Picknick unterwegs</span></li>
+          <li><span class="time">13:00</span><span class="activity">🏊 Käpt'n Hook Teufelswasser Freibad – nachmittags voll Spaß!</span></li>
+          <li><span class="time">16:30</span><span class="activity">🏡 Rückkehr · Zeit zum Spielen/Chillen</span></li>
+          <li><span class="time">19:00</span><span class="activity">🍽️ Abendessen · Dorf oder Alm</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">📊 Montelino's ca. 4–5 km · Gesamt-Fußweg ca. 6–8 km</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>💧 Tag 6 – Di, 25.08. · Kaprun: Klamm + Stauseen ⭐</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück · Jacken einpacken (oben kühler!)</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚗 Fahrt Kaprun (~28 km, ca. 28 Min.)</span></li>
+          <li><span class="time">09:30</span><span class="activity">💧 Sigmund-Thun-Klamm Kaprun – wilder Gebirgsbach, dramatische Felswände</span></li>
+          <li><span class="time">11:00</span><span class="activity">🍽️ Mittagessen in Kaprun (Ortszentrum)</span></li>
+          <li><span class="time">12:30</span><span class="activity">🏔️ Kaprun Hochgebirgs-Stauseen – Kesselfallbahn & Schrägaufzüge hinauf zu 2.000 m</span></li>
+          <li><span class="time">15:30</span><span class="activity">🚗 Rückfahrt Saalbach</span></li>
+          <li><span class="time">17:00</span><span class="activity">🏡 Entspannen · Einkaufen im Ort</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">💡 Stauseen-Ticket vorab online kaufen spart Wartezeit! · Auf 2.000 m: Jacke Pflicht!</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🦅 Tag 7 – Mi, 26.08. · Flying Fox Leogang + Schaubergwerk</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚗 Fahrt Leogang (~20 km, ca. 20 Min.)</span></li>
+          <li><span class="time">09:30</span><span class="activity">🦅 Flying Fox XXL Leogang – spektakuläre Zipline über die Berge</span></li>
+          <li><span class="time">11:00</span><span class="activity">⛏️ Schaubergwerk Leogang (JOKER CARD Bonus) – Abenteuer unter der Erde · im Bergwerk ~10°C</span></li>
+          <li><span class="time">13:00</span><span class="activity">🍽️ Mittagessen Leogang</span></li>
+          <li><span class="time">14:30</span><span class="activity">🚗 Rückfahrt Saalbach</span></li>
+          <li><span class="time">15:00</span><span class="activity">🧭 Geocaching im Glemmtal (JOKER CARD inkl.) oder Almrunde</span></li>
+          <li><span class="time">18:00</span><span class="activity">🍽️ Abendessen · Unterschwarzachalm (Reservierung!)</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">💡 Bergwerk-Jacke vom Hotel ausleihen falls vergessen! · Mindestalter Flying Fox prüfen</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🏖️ Tag 8 – Do, 27.08. · Zell am See – Badetag</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück</span></li>
+          <li><span class="time">09:30</span><span class="activity">🚗 Fahrt Zell am See (~30 km, ca. 30 Min.)</span></li>
+          <li><span class="time">10:00</span><span class="activity">🚶 Spaziergang Zell am See Innenstadt – Stadtbummel</span></li>
+          <li><span class="time">11:00</span><span class="activity">🏊 Strandbad Zell am See – Schwimmen, Tretboot, Entspannen</span></li>
+          <li><span class="time">13:00</span><span class="activity">🍽️ Mittagessen am See (Restaurant mit Seeblick)</span></li>
+          <li><span class="time">14:30</span><span class="activity">⛵ Schifffahrt Zeller See (optional) oder weiter Badebetrieb</span></li>
+          <li><span class="time">17:00</span><span class="activity">🚗 Rückfahrt Saalbach</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">🌊 Donnerstag → Wochentag, deutlich ruhiger als Wochenende! · Wassertemperatur ca. 20–22°C</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>❄️ Tag 9 – Fr, 28.08. · Weißsee Gletscherwelt ⭐</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück · warme Jacken einpacken (auf 2.300 m: kalt!)</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚗 Fahrt Uttendorf (~42 km, ca. 42 Min.)</span></li>
+          <li><span class="time">10:00</span><span class="activity">🚡 Gondeln zur Weißsee Gletscherwelt auf 2.300 m</span></li>
+          <li><span class="time">10:30</span><span class="activity">❄️ Erkundung Weißsee, Gletscher, Spielbereich – atemberaubendes Panorama</span></li>
+          <li><span class="time">12:30</span><span class="activity">🍽️ Mittagessen Bergrestaurant Weißsee</span></li>
+          <li><span class="time">13:30</span><span class="activity">🥾 Almwanderung auf dem Rückweg (ca. 2–3 km) oder Gondelfahrt zurück</span></li>
+          <li><span class="time">15:30</span><span class="activity">🚗 Rückfahrt Saalbach</span></li>
+          <li><span class="time">18:00</span><span class="activity">🏡 Entspannen · Souvenirshop</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">💡 Sonnenschutz einpacken (UV-Strahlung auf 2.300 m sehr hoch!) + warme Jacke</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🏔️ Tag 10 – Sa, 29.08. · Kohlmais Almwanderung & Genusstag</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Frühstück</span></li>
+          <li><span class="time">09:00</span><span class="activity">🚡 Kohlmaisbahn (JOKER CARD: kostenlos!) auf 1.794 m</span></li>
+          <li><span class="time">09:30</span><span class="activity">🥾 Panoramaweg Kohlmais – gemütliche Almrunde mit Bergblick</span></li>
+          <li><span class="time">12:00</span><span class="activity">🍽️ Mittagessen Kohlmaishütte – Kaiserschmarrn mit Ausblick!</span></li>
+          <li><span class="time">13:30</span><span class="activity">🚡 Rückfahrt per Gondel ins Tal</span></li>
+          <li><span class="time">14:30</span><span class="activity">🏊 Teufelswasser Freibad – letzter Badespaß!</span></li>
+          <li><span class="time">17:00</span><span class="activity">🛍️ Souvenirs einkaufen im Ort</span></li>
+          <li><span class="time">19:00</span><span class="activity">🍽️ Abschluss-Abendessen! (Reservierung unbedingt!) · Kohlmaishütte oder Dorfgasthaus</span></li>
+        </ul>
+        <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">🌊 Samstag → etwas mehr Betrieb. Gondel früh, Wanderung ruhig. · 📊 ca. 5–7 km zu Fuß</p>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header" onclick="toggleDay(this)">
+        <h3>🏠 Tag 11 – So, 30.08. · Abreise</h3>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="day-content">
+        <ul class="timeline">
+          <li><span class="time">08:00</span><span class="activity">🥐 Letztes Frühstück</span></li>
+          <li><span class="time">09:30</span><span class="activity">🚶 Letzter Spaziergang Glemmtal · Fotos · Abschied nehmen</span></li>
+          <li><span class="time">11:00</span><span class="activity">📦 Auschecken · Gepäck beladen</span></li>
+          <li><span class="time">12:00</span><span class="activity">🚗 Heimreise · Gute Fahrt!</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- INTERAKTIVE KARTE -->
+<!-- ══════════════════════════════════════════ -->
+<section id="karte">
+  <div class="container">
+    <div class="section-header">
+      <h2>🗺️ Interaktive Karte</h2>
+      <p>Alle Orte auf einen Blick · Klick auf Marker für Infos · 📍-Button für deinen Standort</p>
+    </div>
+    <div id="map"></div>
+    <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-secondary)">
+      💡 <strong>Tipps:</strong> Klicke auf 📍 (oben links auf der Karte) für deinen Standort · Emojis zeigen die Kategorie · Zoom mit Maus/Geste
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PRAKTISCHE HINWEISE -->
+<!-- ══════════════════════════════════════════ -->
+<section id="hinweise">
+  <div class="container">
+    <div class="section-header">
+      <h2>ℹ️ Praktische Hinweise</h2>
+      <p>Alles Wichtige für einen reibungslosen Familienurlaub</p>
+    </div>
+
+    <div class="joker-highlight">
+      <h3>🃏 JOKER CARD – Die wichtigste Karte des Urlaubs!</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:0.5rem">Gültig 22. Mai – 26. Oktober 2026 ✅ · Direkt beim Einzug vom Hotel erhalten · Kostenlos!</p>
+      <div class="joker-features">
+        <span class="joker-feature">🚡 6 Bergbahnen gratis</span>
+        <span class="joker-feature">🎾 Tennis Hinterglemm gratis</span>
+        <span class="joker-feature">🏛️ Heimathaus & Museum gratis</span>
+        <span class="joker-feature">🧭 Geocaching inklusive</span>
+        <span class="joker-feature">🚌 Glemmtaler Bus inklusive</span>
+        <span class="joker-feature">🚴 20% auf Bike-Tickets</span>
+        <span class="joker-feature">⛏️ Schaubergwerk Leogang Rabatt</span>
+        <span class="joker-feature">🌊 Kaprun Stauseen Rabatt</span>
+      </div>
+      <p style="margin-top:0.8rem;font-size:0.85rem;color:var(--text-secondary)">⚠️ Kinder ab Jg. 2022 oder jünger kostenlos – kein eigenes Ticket nötig · Nur bei Partnerunterkünften in Saalbach-Hinterglemm</p>
+    </div>
+
+    <div class="info-grid">
+
+      <div class="info-card">
+        <h3>🌤️ Wetter im August</h3>
+        <ul>
+          <li>🌡️ Temperatur: 18–26°C im Tal</li>
+          <li>☀️ Viele Sonnenstunden, warme Sommertage</li>
+          <li>⛈️ Nachmittags-Gewitter möglich (typisch Alpen)</li>
+          <li>🏔️ Auf 2.000+ m: 5–12°C kühler</li>
+          <li>💡 Morgens aktiv, nachmittags Gewitter im Auge behalten</li>
+          <li>🧥 Immer Regenjacke & Pulli einpacken</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>🚗 Anreise & Transport</h3>
+        <ul>
+          <li>✈️ Nächste Flughäfen: Salzburg (95 km), Innsbruck (130 km), München (200 km)</li>
+          <li>🚗 Auto empfohlen für Ausflüge (70 km Radius)</li>
+          <li>🚌 Glemmtaler Bus kostenlos mit JOKER CARD</li>
+          <li>🅿️ Parkplätze am Ortseingang (kostenpflichtig)</li>
+          <li>🚂 Bahn: Bahnhof Zell am See + Bus/Taxi nach Saalbach</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>👨‍👩‍👧‍👦 Mit Kindern (8 & 11 Jahre)</h3>
+        <ul>
+          <li>🌲 Hochseilpark: Mini-Parcours ab 4 J., Standard ab ca. 8 J.</li>
+          <li>💧 Klammen: Kein Kinderwagen, aber 8+ J. kein Problem</li>
+          <li>🦅 Flying Fox: Mindestalter/Gewicht vorab prüfen</li>
+          <li>⛏️ Bergwerk: Ideal für Kinder – spannend & kühl</li>
+          <li>🏊 Badebereiche: Teufelswasser & Zeller See kindersicher</li>
+          <li>🎒 Rucksack mit Snacks & Wasser immer dabei</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>🎒 Packliste (Sommer)</h3>
+        <ul>
+          <li>🥾 Wanderschuhe (festes Profil) für die ganze Familie</li>
+          <li>🧥 Fleece-Jacke (für 2.000+ m)</li>
+          <li>🌧️ Regenjacke / Regenponchos</li>
+          <li>🕶️ Sonnenbrillen & Sonnencreme SPF 50+</li>
+          <li>🎩 Sonnenhut / Mütze</li>
+          <li>💧 Trinkflaschen (mind. 1,5 L/Person)</li>
+          <li>💊 Pflaster & kleine Reiseapotheke</li>
+          <li>💵 Bargeld (Klamm-Eintritt nur bar!)</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>📱 Nützliche Apps & Infos</h3>
+        <ul>
+          <li>📱 "Home of Lässig" App – JOKER CARD digital</li>
+          <li>🗺️ Bergfex App – Wanderkarten & Wetter</li>
+          <li>🌤️ Wetter: wetter.com / yr.no für Bergwetter</li>
+          <li>🚡 Saalbach App – Bergbahnen Live-Status</li>
+          <li>📞 Notfall: 112 (EU) / 140 (Bergrettung Österreich)</li>
+          <li>🏥 Arzt: Gemeindepraxis Saalbach (im Ort)</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>💡 Insider-Tipps</h3>
+        <ul>
+          <li>⏰ Bergbahnen früh (vor 09:30) für kurze Wartezeiten</li>
+          <li>🍽️ Abendessen immer reservieren (Hochsaison!)</li>
+          <li>💵 Kitzlochklamm: nur Barzahlung!</li>
+          <li>🌊 Zell am See: Wochentags deutlich ruhiger</li>
+          <li>🎒 Jause/Picknick spart Zeit und Geld auf der Alm</li>
+          <li>🌩️ Bei Gewitter: Sofort von Gipfeln runter!</li>
+          <li>📅 August = Hochsaison → Beliebte Orte früh besuchen</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border:2px solid #1565c0;border-radius:14px;padding:1.5rem;margin:1.5rem 0">
+      <h3 style="color:#1565c0;font-size:1.1rem;margin-bottom:0.8rem">📱 Reiseführer auf den Homescreen – als App nutzen!</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem">
+        <div style="background:white;border-radius:10px;padding:1rem;box-shadow:0 2px 6px rgba(0,0,0,0.08)">
+          <strong style="display:block;margin-bottom:0.5rem">🍎 iPhone / iPad (Safari)</strong>
+          <ol style="padding-left:1.2rem;font-size:0.85rem;color:#555;line-height:1.8">
+            <li>Seite in <strong>Safari</strong> öffnen</li>
+            <li>Unten auf das <strong>Teilen-Symbol</strong> tippen (Quadrat mit Pfeil nach oben)</li>
+            <li><strong>„Zum Home-Bildschirm"</strong> wählen</li>
+            <li>Namen bestätigen → <strong>„Hinzufügen"</strong></li>
+          </ol>
+        </div>
+        <div style="background:white;border-radius:10px;padding:1rem;box-shadow:0 2px 6px rgba(0,0,0,0.08)">
+          <strong style="display:block;margin-bottom:0.5rem">🤖 Android (Chrome)</strong>
+          <ol style="padding-left:1.2rem;font-size:0.85rem;color:#555;line-height:1.8">
+            <li>Seite in <strong>Chrome</strong> öffnen</li>
+            <li>Oben rechts auf <strong>⋮ (Menü)</strong> tippen</li>
+            <li><strong>„Zum Startbildschirm hinzufügen"</strong> wählen</li>
+            <li>Namen bestätigen → <strong>„Hinzufügen"</strong></li>
+          </ol>
+        </div>
+      </div>
+      <p style="margin-top:0.8rem;font-size:0.82rem;color:#555">💡 Danach erscheint der Reiseführer als App-Kachel auf dem Homescreen – kein Browser nötig, direkt öffnen!</p>
+    </div>
+
+    <div style="text-align:center;margin-top:2rem;padding:1.5rem;background:var(--bg-secondary);border-radius:12px;">
+      <p style="font-size:0.85rem;color:var(--text-secondary)">
+        🗓️ Stand: August 2026 · ⚠️ Öffnungszeiten, Preise und Verfügbarkeiten bitte immer vorab auf den offiziellen Websites prüfen.<br>
+        🌐 <a href="https://www.saalbach.com/de" target="_blank">saalbach.com</a> ·
+        <a href="https://www.hochseilpark.at" target="_blank">hochseilpark.at</a> ·
+        <a href="https://www.kitzlochklamm.at" target="_blank">kitzlochklamm.at</a> ·
+        <a href="https://www.weissee.com" target="_blank">weissee.com</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- BACK TO TOP + THEME TOGGLE -->
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Nach oben">↑</button>
+<button class="theme-toggle" onclick="toggleTheme()" title="Dark/Light Mode">
+  <span id="theme-icon">🌙</span>
+</button>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- LEAFLET JS -->
+<!-- ══════════════════════════════════════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // ─── THEME TOGGLE ─────────────────────────────
+  function toggleTheme() {
+    const html = document.documentElement;
+    const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+  }
+  (function() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    const icon = document.getElementById('theme-icon');
+    if (icon) icon.textContent = saved === 'dark' ? '☀️' : '🌙';
+  })();
+
+  // ─── TAGESPLAN TOGGLE ─────────────────────────
+  function toggleDay(header) {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector('.toggle-icon');
+    const isOpen = content.classList.contains('open');
+    content.classList.toggle('open', !isOpen);
+    icon.textContent = isOpen ? '▼' : '▲';
+  }
+  // Open first day by default
+  document.addEventListener('DOMContentLoaded', function() {
+    const firstDay = document.querySelector('.day-content');
+    if (firstDay) { firstDay.classList.add('open'); firstDay.previousElementSibling.querySelector('.toggle-icon').textContent = '▲'; }
+  });
+
+  // ─── LEAFLET MAP ──────────────────────────────
+  const map = L.map('map').setView([47.391, 12.625], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 18
+  }).addTo(map);
+
+  function mkIcon(emoji, color) {
+    return L.divIcon({
+      html: `<div style="background:${color};width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)">${emoji}</div>`,
+      className: '', iconSize: [36,36], iconAnchor: [18,36], popupAnchor: [0,-36]
+    });
+  }
+
+  const places = [
+    // Hauptort
+    { lat:47.391, lng:12.642, emoji:'🏘️', color:'#2e7d32', name:'Saalbach', cat:'Ort', desc:'Hauptort – Ausgangspunkt für alle Aktivitäten' },
+    { lat:47.375, lng:12.569, emoji:'🏘️', color:'#2e7d32', name:'Hinterglemm', cat:'Ort', desc:'Nachbarort – Hochseilpark, 12er Kogel Bahn' },
+    // Wandern / Gondeln
+    { lat:47.385, lng:12.629, emoji:'🚡', color:'#1565c0', name:'Schattberg X-press', cat:'Bergbahn (JOKER CARD)', desc:'Baumzipfelweg & Gipfelspielplatz – JOKER CARD kostenlos!' },
+    { lat:47.384, lng:12.657, emoji:'🚡', color:'#1565c0', name:'Kohlmaisbahn', cat:'Bergbahn (JOKER CARD)', desc:'Panoramaweg Kohlmais – JOKER CARD kostenlos!' },
+    { lat:47.371, lng:12.568, emoji:'🚡', color:'#1565c0', name:'12er KOGEL Bahn', cat:'Bergbahn (JOKER CARD)', desc:'Almwanderung Hinterglemm – JOKER CARD kostenlos!' },
+    // Aktivitäten
+    { lat:47.365, lng:12.554, emoji:'🌲', color:'#e65100', name:'Hochseilpark Saalbach', cat:'Aktivität', desc:'Größter Hochseilpark Europas! 200+ Stationen · Talschlussweg 367, Hinterglemm · +43 6217 29029' },
+    { lat:47.388, lng:12.637, emoji:'🌊', color:'#00897b', name:"Käpt'n Hook Teufelswasser", cat:'Aktivität', desc:'Erlebnisfreibad in Saalbach – Piratenthema, Rutschen, Planschbecken' },
+    { lat:47.280, lng:12.647, emoji:'💧', color:'#1565c0', name:'Kitzlochklamm Taxenbach', cat:'Klamm (~35 km)', desc:'Spektakuläre Schlucht · Kitzlochklammstraße 16 · Nur Barzahlung!' },
+    { lat:47.272, lng:12.757, emoji:'💧', color:'#1565c0', name:'Sigmund-Thun-Klamm', cat:'Klamm (~25 km)', desc:'Wilder Gebirgsbach in Kaprun · Kesselfallstraße · +43 681 84924737' },
+    { lat:47.278, lng:12.648, emoji:'🚣', color:'#0288d1', name:'Raftingcenter Taxenbach', cat:'Aktivität (~35 km)', desc:'Rafting auf der Salzach · Marktstraße 1 · +43 664 4025149' },
+    { lat:47.442, lng:12.761, emoji:'🦅', color:'#e65100', name:'Flying Fox XXL Leogang', cat:'Aktivität (~20 km)', desc:'Spektakuläre Zipline über die Berge' },
+    { lat:47.273, lng:12.760, emoji:'🏔️', color:'#546e7a', name:'Kaprun Stauseen', cat:'Ausflug (~30 km)', desc:'Kaprun Hochgebirgs-Stauseen auf 2.000 m · Kesselfallstraße 98' },
+    { lat:47.325, lng:12.798, emoji:'🏊', color:'#0288d1', name:'Zell am See', cat:'Ausflug (~30 km)', desc:'Strandbäder am Zeller See · Wassertemperatur August ~20°C' },
+    { lat:47.228, lng:12.554, emoji:'❄️', color:'#546e7a', name:'Weißsee Gletscherwelt', cat:'Ausflug (~45 km)', desc:'Gletscherwelt auf 2.300 m · Stubach 90, Uttendorf · Jacke einpacken!' },
+    { lat:47.449, lng:12.748, emoji:'⛏️', color:'#795548', name:'Schaubergwerk Leogang', cat:'Ausflug (~15 km)', desc:'Historisches Bergwerk · JOKER CARD Bonuspartner · Im Bergwerk ~10°C!' },
+    // Restaurants
+    { lat:47.374, lng:12.571, emoji:'🍽️', color:'#ff8f00', name:'Hinterhag Alm', cat:'Restaurant', desc:'Traditionelle Almhütte Hinterglemm · Österreichische Küche · Kinderfreundlich' },
+  ];
+
+  places.forEach(p => {
+    L.marker([p.lat, p.lng], { icon: mkIcon(p.emoji, p.color) })
+      .addTo(map)
+      .bindPopup(`<div style="min-width:200px"><strong style="color:#2e7d32">${p.emoji} ${p.name}</strong><br/><em style="font-size:0.8rem;color:#888">${p.cat}</em><br/><span style="font-size:0.85rem">${p.desc}</span></div>`);
+  });
+
+  // Geolocation
+  let locMarker = null, locCircle = null;
+  function locateMe() {
+    if (!navigator.geolocation) { alert('Geolocation nicht verfügbar.'); return; }
+    map.locate({ setView: false, maxZoom: 14, enableHighAccuracy: true });
+  }
+  map.on('locationfound', e => {
+    if (locMarker) { map.removeLayer(locMarker); map.removeLayer(locCircle); }
+    locMarker = L.marker(e.latlng, { icon: L.divIcon({ html: '<div style="background:#4285f4;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>', className:'', iconSize:[18,18], iconAnchor:[9,9] }) }).addTo(map).bindPopup('📍 Dein Standort').openPopup();
+    locCircle = L.circle(e.latlng, e.accuracy / 2, { color:'#4285f4', fillColor:'#4285f4', fillOpacity:0.15, weight:1 }).addTo(map);
+    map.setView(e.latlng, 13);
+  });
+  map.on('locationerror', () => alert('Standort konnte nicht ermittelt werden.'));
+
+  const locBtn = L.control({ position: 'topleft' });
+  locBtn.onAdd = () => {
+    const b = L.DomUtil.create('button');
+    b.innerHTML = '📍'; b.title = 'Meinen Standort';
+    b.style.cssText = 'background:white;border:2px solid rgba(0,0,0,0.2);border-radius:4px;width:34px;height:34px;font-size:18px;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,0.4)';
+    b.onmouseover = () => b.style.background = '#f0f0f0';
+    b.onmouseout = () => b.style.background = 'white';
+    b.onclick = e => { e.preventDefault(); e.stopPropagation(); locateMe(); };
+    return b;
+  };
+  locBtn.addTo(map);
+
+  // Legend
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = () => {
+    const d = L.DomUtil.create('div');
+    d.style.cssText = 'background:white;padding:10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.2);font-size:0.8rem;line-height:1.8';
+    d.innerHTML = '<strong style="display:block;margin-bottom:4px">Legende</strong>🏘️ Orte<br>🚡 Bergbahnen<br>🌲🌊 Aktivitäten<br>💧 Klammen<br>🍽️ Restaurants<br>🏔️⛏️❄️ Ausflüge';
+    return d;
+  };
+  legend.addTo(map);
+</script>
+</body>
+</html>
+
+
